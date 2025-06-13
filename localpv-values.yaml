@@ -1,0 +1,12 @@
+localpv: # 26
+  updateStrategy: # 34
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavaiable: 1
+  resources: # 49
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
+
+fullnameOverride: localpv-provisioner

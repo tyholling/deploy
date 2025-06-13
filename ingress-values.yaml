@@ -1,0 +1,28 @@
+fullnameOverride: ingress-nginx # 12
+
+controller: # 22
+  config: # 56
+    worker-processes: 1
+  kind: DaemonSet # 224
+  resources: # 395
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
+  updateStrategy: # 238
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  admissionWebhooks: # 720
+    createSecretJob: # 755
+      resources:
+        limits: null
+        requests:
+          cpu: 10m
+          memory: 10Mi
+    patchWebhookJob: # 776
+      resources:
+        limits: null
+        requests:
+          cpu: 10m
+          memory: 10Mi

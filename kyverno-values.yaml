@@ -1,0 +1,79 @@
+crds: # 79
+  migration:
+    podResources:
+      limits: null
+      requests:
+        cpu: 10m
+        memory: 10Mi
+
+test: # 461
+  resources:
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
+
+webhooksCleanup: # 508
+  resources:
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
+
+policyReportsCleanup: # 579
+  resources:
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
+
+admissionController: # 777
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  initContainer: # 1029
+    resources:
+      limits: null
+      requests:
+        cpu: 10m
+        memory: 10Mi
+  container: # 1076
+    resources:
+      limits: null
+      requests:
+        cpu: 10m
+        memory: 10Mi
+
+backgroundController: # 1219
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  resources:
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
+
+cleanupController: # 1534
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  resources:
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
+
+reportsController: # 1854
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  resources:
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi

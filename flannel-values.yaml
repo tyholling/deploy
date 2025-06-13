@@ -1,0 +1,5 @@
+podCidr: 172.20.0.0/16 # 8
+
+flannel: # 11
+  enableNFTables: true # 27
+  backend: host-gw # 34

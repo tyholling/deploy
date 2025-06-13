@@ -1,0 +1,15 @@
+fullnameOverride: metrics-server # 15
+
+updateStrategy: # 82
+  rollingUpdate:
+    maxSurge: 0
+    maxUnavailable: 1
+
+args: # 100
+- --kubelet-insecure-tls
+
+resources: # 172
+  limits: null
+  requests:
+    cpu: 10m
+    memory: 10Mi

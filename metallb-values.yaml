@@ -1,0 +1,21 @@
+controller: # 197
+  strategy: # 216
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  resources: # 230
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
+
+speaker: # 262
+  updateStrategy: # 286
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  resources: # 303
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi

@@ -1,0 +1,27 @@
+deploymentStrategy: # 77
+  rollingUpdate:
+    maxSurge: 0
+    maxUnavailable: 1
+
+ingress: # 280
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  path: /grafana/?(.*)
+  pathType: ImplementationSpecific
+  hosts: []
+
+resources: # 354
+  limits: null
+  requests:
+    cpu: 10m
+    memory: 10Mi
+
+persistence: # 416
+  enabled: true
+  size: 10Gi
+
+grafana.ini: # 876
+  server:
+    root_url: http://192.168.64.100/grafana

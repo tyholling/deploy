@@ -3,6 +3,8 @@ fullnameOverride: ingress-nginx # 12
 controller: # 22
   config: # 56
     worker-processes: 1
+  ingressClassResource: # 125
+    default: true
   kind: DaemonSet # 224
   resources: # 395
     limits: null

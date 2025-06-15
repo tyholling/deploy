@@ -9,4 +9,7 @@ localpv: # 26
       cpu: 10m
       memory: 10Mi
 
-fullnameOverride: localpv-provisioner
+fullnameOverride: localpv-provisioner # 74
+
+hostpathClass: # 85
+  isDefaultClass: true # 93

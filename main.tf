@@ -129,7 +129,7 @@ resource "helm_release" "localpv-provisioner" {
 
   depends_on = [
     helm_release.flannel,
-    kubernetes_namespace.metrics,
+    kubernetes_namespace.localpv,
   ]
 }
 
@@ -149,5 +149,48 @@ resource "helm_release" "cert-manager" {
   depends_on = [
     helm_release.flannel,
     kubernetes_namespace.certmgr,
+  ]
+}
+
+resource "kubectl_manifest" "cert-manager-self-signed-issuer" {
+  yaml_body = file("cert-manager-self-signed-issuer.yaml")
+
+  depends_on = [helm_release.cert-manager]
+}
+
+resource "kubectl_manifest" "cert-manager-ca-cert" {
+  yaml_body = file("cert-manager-ca-cert.yaml")
+
+  depends_on = [
+    helm_release.cert-manager,
+    kubectl_manifest.cert-manager-self-signed-issuer,
+  ]
+}
+
+resource "kubectl_manifest" "cert-manager-cluster-issuer" {
+  yaml_body = file("cert-manager-cluster-issuer.yaml")
+
+  depends_on = [
+    helm_release.cert-manager,
+    kubectl_manifest.cert-manager-ca-cert,
+  ]
+}
+
+resource "kubernetes_namespace" "grafana" {
+  metadata {
+    name = "grafana"
+  }
+}
+
+resource "helm_release" "grafana" {
+  name       = "grafana"
+  repository = "https://grafana.github.io/helm-charts"
+  chart      = "grafana"
+  namespace  = kubernetes_namespace.grafana.metadata[0].name
+  values     = [file("${path.module}/grafana-values.yaml")]
+
+  depends_on = [
+    helm_release.cert-manager,
+    kubernetes_namespace.grafana,
   ]
 }

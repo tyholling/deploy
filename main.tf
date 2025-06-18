@@ -82,12 +82,12 @@ resource "kubernetes_namespace" "ingress" {
   }
 }
 
-resource "helm_release" "ingress" {
-  name       = "ingress"
+resource "helm_release" "ingress-nginx" {
+  name       = "ingress-nginx"
   repository = "https://kubernetes.github.io/ingress-nginx"
   chart      = "ingress-nginx"
   namespace  = kubernetes_namespace.ingress.metadata[0].name
-  values     = [file("${path.module}/ingress-values.yaml")]
+  values     = [file("${path.module}/ingress-nginx-values.yaml")]
 
   depends_on = [
     helm_release.metallb,
@@ -101,12 +101,12 @@ resource "kubernetes_namespace" "metrics" {
   }
 }
 
-resource "helm_release" "metrics" {
-  name       = "metrics"
+resource "helm_release" "metrics-server" {
+  name       = "metrics-server"
   repository = "https://kubernetes-sigs.github.io/metrics-server"
   chart      = "metrics-server"
   namespace  = kubernetes_namespace.metrics.metadata[0].name
-  values     = [file("${path.module}/metrics-values.yaml")]
+  values     = [file("${path.module}/metrics-server-values.yaml")]
 
   depends_on = [
     helm_release.flannel,
@@ -120,15 +120,34 @@ resource "kubernetes_namespace" "localpv" {
   }
 }
 
-resource "helm_release" "localpv" {
-  name       = "localpv"
+resource "helm_release" "localpv-provisioner" {
+  name       = "localpv-provisioner"
   repository = "https://openebs.github.io/dynamic-localpv-provisioner"
   chart      = "localpv-provisioner"
   namespace  = kubernetes_namespace.localpv.metadata[0].name
-  values     = [file("${path.module}/localpv-values.yaml")]
+  values     = [file("${path.module}/localpv-provisioner-values.yaml")]
 
   depends_on = [
     helm_release.flannel,
     kubernetes_namespace.metrics,
+  ]
+}
+
+resource "kubernetes_namespace" "certmgr" {
+  metadata {
+    name = "certmgr"
+  }
+}
+
+resource "helm_release" "cert-manager" {
+  name       = "cert-manager"
+  repository = "https://charts.jetstack.io"
+  chart      = "cert-manager"
+  namespace  = kubernetes_namespace.certmgr.metadata[0].name
+  values     = [file("${path.module}/cert-manager-values.yaml")]
+
+  depends_on = [
+    helm_release.flannel,
+    kubernetes_namespace.certmgr,
   ]
 }

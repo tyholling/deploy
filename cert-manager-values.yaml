@@ -1,0 +1,37 @@
+fullnameOverride: cert-manager
+
+crds: # 77
+  enabled: true
+  keep: true
+
+strategy: # 111
+  rollingUpdate:
+    maxSurge: 0
+    maxUnavailable: 1
+
+resources: # 318
+  limits: null
+  requests:
+    cpu: 10m
+    memory: 10Mi
+
+webhook: # 623
+  resources: # 796
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
+
+cainjector: # 1003
+  resources: # 1132
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
+
+startupapicheck: # 1277
+  resources: # 1341
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi

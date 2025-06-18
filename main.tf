@@ -90,6 +90,7 @@ resource "helm_release" "ingress-nginx" {
   values     = [file("${path.module}/ingress-nginx-values.yaml")]
 
   depends_on = [
+    helm_release.cert-manager,
     helm_release.metallb,
     kubernetes_namespace.ingress,
   ]
@@ -190,7 +191,8 @@ resource "helm_release" "grafana" {
   values     = [file("${path.module}/grafana-values.yaml")]
 
   depends_on = [
-    helm_release.cert-manager,
+    helm_release.ingress-nginx,
+    helm_release.localpv-provisioner,
     kubernetes_namespace.grafana,
   ]
 }

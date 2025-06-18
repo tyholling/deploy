@@ -14,6 +14,7 @@ ingress: # 280
   hosts: []
   tls:
   - hosts: []
+    secretName: grafana-tls
 
 resources: # 354
   limits: null

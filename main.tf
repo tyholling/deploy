@@ -196,3 +196,22 @@ resource "helm_release" "grafana" {
     kubernetes_namespace.grafana,
   ]
 }
+
+resource "kubernetes_namespace" "mariadb" {
+  metadata {
+    name = "mariadb"
+  }
+}
+
+resource "helm_release" "mariadb" {
+  name       = "mariadb"
+  repository = "oci://registry-1.docker.io/bitnamicharts"
+  chart      = "mariadb"
+  namespace  = kubernetes_namespace.mariadb.metadata[0].name
+  values     = [file("${path.module}/mariadb-values.yaml")]
+
+  depends_on = [
+    helm_release.flannel,
+    kubernetes_namespace.mariadb,
+  ]
+}

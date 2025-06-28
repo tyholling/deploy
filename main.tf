@@ -29,6 +29,8 @@ provider "kubernetes" {
   config_path = "~/.kube/config"
 }
 
+provider "random" {}
+
 resource "kubernetes_namespace" "flannel" {
   metadata {
     name = "flannel"
@@ -203,12 +205,35 @@ resource "kubernetes_namespace" "mariadb" {
   }
 }
 
+resource "random_string" "mariadb-password" {
+  length  = 64
+  special = false
+  upper   = true
+  lower   = true
+  numeric = true
+}
+
+resource "kubernetes_secret" "mariadb-credentials" {
+  metadata {
+    name      = "mariadb-credentials"
+    namespace = kubernetes_namespace.mariadb.metadata[0].name
+  }
+  type = "Opaque"
+  data = {
+    "mariadb-root-password" = random_string.mariadb-password.result
+  }
+}
+
 resource "helm_release" "mariadb" {
   name       = "mariadb"
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "mariadb"
   namespace  = kubernetes_namespace.mariadb.metadata[0].name
   values     = [file("${path.module}/mariadb-values.yaml")]
+  set {
+    name  = "auth.existingSecret"
+    value = kubernetes_secret.mariadb-credentials.metadata[0].name
+  }
 
   depends_on = [
     helm_release.flannel,

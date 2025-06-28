@@ -22,13 +22,18 @@ resources: # 354
     cpu: 10m
     memory: 10Mi
 
-persistence: # 416
-  enabled: true
-  size: 10Gi
-
-initChownData: # 452
-  enabled: false
+envValueFrom: # 548
+  MARIADB_PASSWORD:
+    secretKeyRef:
+      name: mariadb-credentials
+      key: mariadb-root-password
 
 grafana.ini: # 876
   server:
     root_url: http://192.168.64.100/grafana
+  database:
+    type: mysql
+    host: mariadb.mariadb:3306
+    name: grafana
+    user: grafana
+    password: $__env{MARIADB_PASSWORD}

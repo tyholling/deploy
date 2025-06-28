@@ -1,6 +1,8 @@
 primary: # 275
-  resources:
+  resources: # 506
     limits: null
     requests:
       cpu: 10m
       memory: 10Mi
+  persistence: # 595
+    size: 10Gi

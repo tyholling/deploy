@@ -26,7 +26,7 @@ envValueFrom: # 548
   MARIADB_PASSWORD:
     secretKeyRef:
       name: mariadb-credentials
-      key: mariadb-root-password
+      key: mariadb-grafana-password
 
 grafana.ini: # 876
   server:

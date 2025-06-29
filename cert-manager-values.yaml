@@ -2,7 +2,7 @@ fullnameOverride: cert-manager
 
 crds: # 77
   enabled: true
-  keep: true
+  keep: false
 
 strategy: # 111
   rollingUpdate:

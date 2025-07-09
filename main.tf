@@ -67,8 +67,8 @@ resource "kubernetes_namespace" "certmgr" {
   }
 }
 
-resource "helm_release" "certmgr" {
-  name       = "certmgr"
+resource "helm_release" "cert-manager" {
+  name       = "cert-manager"
   repository = "https://charts.jetstack.io"
   chart      = "cert-manager"
   namespace  = kubernetes_namespace.certmgr.metadata[0].name
@@ -83,14 +83,14 @@ resource "helm_release" "certmgr" {
 resource "kubectl_manifest" "cert-manager-self-signed-issuer" {
   yaml_body = file("cert-manager-self-signed-issuer.yaml")
 
-  depends_on = [helm_release.certmgr]
+  depends_on = [helm_release.cert-manager]
 }
 
 resource "kubectl_manifest" "cert-manager-ca-cert" {
   yaml_body = file("cert-manager-ca-cert.yaml")
 
   depends_on = [
-    helm_release.certmgr,
+    helm_release.cert-manager,
     kubectl_manifest.cert-manager-self-signed-issuer,
   ]
 }
@@ -99,7 +99,7 @@ resource "kubectl_manifest" "cert-manager-cluster-issuer" {
   yaml_body = file("cert-manager-cluster-issuer.yaml")
 
   depends_on = [
-    helm_release.certmgr,
+    helm_release.cert-manager,
     kubectl_manifest.cert-manager-ca-cert,
   ]
 }
@@ -110,8 +110,8 @@ resource "kubernetes_namespace" "localpv" {
   }
 }
 
-resource "helm_release" "localpv" {
-  name       = "localpv"
+resource "helm_release" "localpv-provisioner" {
+  name       = "localpv-provisioner"
   repository = "https://openebs.github.io/dynamic-localpv-provisioner"
   chart      = "localpv-provisioner"
   namespace  = kubernetes_namespace.localpv.metadata[0].name
@@ -160,8 +160,8 @@ resource "kubernetes_namespace" "metrics" {
   }
 }
 
-resource "helm_release" "metrics" {
-  name       = "metrics"
+resource "helm_release" "metrics-server" {
+  name       = "metrics-server"
   repository = "https://kubernetes-sigs.github.io/metrics-server"
   chart      = "metrics-server"
   namespace  = kubernetes_namespace.metrics.metadata[0].name
@@ -178,15 +178,15 @@ resource "kubernetes_namespace" "ingress" {
     name = "ingress"
   }
 }
-resource "helm_release" "ingress" {
-  name       = "ingress"
+resource "helm_release" "ingress-nginx" {
+  name       = "ingress-nginx"
   repository = "https://kubernetes.github.io/ingress-nginx"
   chart      = "ingress-nginx"
   namespace  = kubernetes_namespace.ingress.metadata[0].name
   values     = [file("${path.module}/ingress-nginx-values.yaml")]
 
   depends_on = [
-    helm_release.certmgr,
+    helm_release.cert-manager,
     helm_release.metallb,
     kubernetes_namespace.ingress,
   ]
@@ -241,7 +241,7 @@ resource "helm_release" "mariadb" {
 
   depends_on = [
     helm_release.flannel,
-    helm_release.localpv,
+    helm_release.localpv-provisioner,
     helm_release.metallb,
     kubernetes_namespace.mariadb,
   ]
@@ -324,7 +324,7 @@ resource "helm_release" "grafana" {
   }
 
   depends_on = [
-    helm_release.ingress,
+    helm_release.ingress-nginx,
     helm_release.mariadb,
     mysql_grant.grafana,
     kubernetes_namespace.grafana,
@@ -340,7 +340,7 @@ resource "helm_release" "loki" {
 
   depends_on = [
     helm_release.flannel,
-    helm_release.localpv,
+    helm_release.localpv-provisioner,
     kubernetes_namespace.grafana,
   ]
 }
@@ -355,7 +355,7 @@ resource "helm_release" "fluent-bit" {
   name       = "fluent-bit"
   repository = "https://fluent.github.io/helm-charts"
   chart      = "fluent-bit"
-  namespace  = kubernetes_namespace.grafana.metadata[0].name
+  namespace  = kubernetes_namespace.fluent-bit.metadata[0].name
   values     = [file("${path.module}/fluent-bit-values.yaml")]
 
   depends_on = [

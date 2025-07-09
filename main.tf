@@ -330,3 +330,17 @@ resource "helm_release" "grafana" {
     kubernetes_namespace.grafana,
   ]
 }
+
+resource "helm_release" "loki" {
+  name       = "loki"
+  repository = "https://grafana.github.io/helm-charts"
+  chart      = "loki"
+  namespace  = kubernetes_namespace.grafana.metadata[0].name
+  values     = [file("${path.module}/loki-values.yaml")]
+
+  depends_on = [
+    helm_release.flannel,
+    helm_release.localpv,
+    kubernetes_namespace.grafana,
+  ]
+}

@@ -1,0 +1,54 @@
+deploymentMode: SingleBinary # 55
+
+loki: # 64
+  auth_enabled: false # 335
+  commonConfig: # 359
+    replication_factor: 1 # 361
+  storage: # 365
+    type: filesystem # 372
+  schemaConfig: # 466
+    configs:
+    - from: 2025-01-01
+      object_store: filesystem
+      store: tsdb
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+test: # 719
+  enabled: false # 720
+
+lokiCanary: # 747
+  enabled: false # 748
+
+gateway: # 988
+  enabled: false # 990
+
+singleBinary: # 1362
+  replicas: 1 # 1364
+  resources: # 1415
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
+  persistence: # 1433
+    size: 10Gi # 1439
+
+write: # 1459
+  replicas: 0 # 1461
+
+read: # 1580
+  replicas: 0 # 1582
+
+backend: # 1692
+  replicas: 0 # 1694
+
+memcached: # 3194
+  enabled: false # 3196
+
+resultsCache: # 3252
+  enabled: false # 3254
+
+chunksCache: # 3352
+  enabled: false # 3354

@@ -345,21 +345,27 @@ resource "helm_release" "loki" {
   ]
 }
 
-resource "kubernetes_namespace" "fluentb" {
+resource "kubernetes_namespace" "opentel" {
   metadata {
-    name = "fluentb"
+    name = "opentel"
   }
 }
 
-resource "helm_release" "fluent-bit" {
-  name       = "fluent-bit"
-  repository = "https://fluent.github.io/helm-charts"
-  chart      = "fluent-bit"
-  namespace  = kubernetes_namespace.fluentb.metadata[0].name
-  values     = [file("${path.module}/fluent-bit-values.yaml")]
+resource "helm_release" "opentelemetry-operator" {
+  name       = "opentelemetry-operator"
+  repository = "https://open-telemetry.github.io/opentelemetry-helm-charts"
+  chart      = "opentelemetry-operator"
+  namespace  = kubernetes_namespace.opentel.metadata[0].name
+  values     = [file("${path.module}/opentelemetry-operator-values.yaml")]
 
   depends_on = [
     helm_release.flannel,
-    kubernetes_namespace.fluentb,
+    kubernetes_namespace.opentel,
   ]
+}
+
+resource "kubectl_manifest" "logs-collector" {
+  yaml_body = file("logs-collector.yaml")
+
+  depends_on = [helm_release.opentelemetry-operator]
 }

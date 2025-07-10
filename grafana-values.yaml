@@ -13,7 +13,8 @@ ingress: # 280
   pathType: ImplementationSpecific
   hosts: []
   tls:
-  - hosts: []
+  - hosts:
+    - 192.168.64.100
     secretName: grafana-tls
 
 resources: # 354

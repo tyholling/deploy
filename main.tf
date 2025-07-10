@@ -345,9 +345,9 @@ resource "helm_release" "loki" {
   ]
 }
 
-resource "kubernetes_namespace" "fluent-bit" {
+resource "kubernetes_namespace" "fluentb" {
   metadata {
-    name = "fluent-bit"
+    name = "fluentb"
   }
 }
 
@@ -355,11 +355,11 @@ resource "helm_release" "fluent-bit" {
   name       = "fluent-bit"
   repository = "https://fluent.github.io/helm-charts"
   chart      = "fluent-bit"
-  namespace  = kubernetes_namespace.fluent-bit.metadata[0].name
+  namespace  = kubernetes_namespace.fluentb.metadata[0].name
   values     = [file("${path.module}/fluent-bit-values.yaml")]
 
   depends_on = [
     helm_release.flannel,
-    kubernetes_namespace.fluent-bit,
+    kubernetes_namespace.fluentb,
   ]
 }

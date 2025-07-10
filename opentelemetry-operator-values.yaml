@@ -1,0 +1,6 @@
+manager: # 43
+  resources: # 97
+    limits: {}
+    requests:
+      cpu: 10m
+      memory: 10Mi

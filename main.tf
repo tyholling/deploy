@@ -2,29 +2,29 @@ terraform {
   required_providers {
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 2.17"
+      version = "~> 3"
     }
     kubectl = {
       source  = "alekc/kubectl"
-      version = "~> 2.1"
+      version = "~> 2"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.37"
+      version = "~> 2"
     }
     mysql = {
       source  = "petoju/mysql"
-      version = "~> 3.0"
+      version = "~> 3"
     }
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.7"
+      version = "~> 3"
     }
   }
 }
 
 provider "helm" {
-  kubernetes {
+  kubernetes = {
     config_path = "~/.kube/config"
   }
 }
@@ -234,10 +234,10 @@ resource "helm_release" "mariadb" {
   chart      = "mariadb"
   namespace  = kubernetes_namespace.mariadb.metadata[0].name
   values     = [file("${path.module}/mariadb-values.yaml")]
-  set {
+  set = [{
     name  = "auth.existingSecret"
     value = kubernetes_secret.mariadb-credentials-mariadb.metadata[0].name
-  }
+  }]
 
   depends_on = [
     helm_release.flannel,
@@ -318,10 +318,10 @@ resource "helm_release" "grafana" {
   chart      = "grafana"
   namespace  = kubernetes_namespace.grafana.metadata[0].name
   values     = [file("${path.module}/grafana-values.yaml")]
-  set {
+  set = [{
     name  = "admin.existingSecret"
     value = kubernetes_secret.grafana-credentials.metadata[0].name
-  }
+  }]
 
   depends_on = [
     helm_release.ingress-nginx,

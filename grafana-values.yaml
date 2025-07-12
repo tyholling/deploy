@@ -14,7 +14,7 @@ ingress: # 280
   hosts: []
   tls:
   - hosts:
-    - 192.168.64.100
+    - 192.168.64.90
     secretName: grafana-tls
 
 resources: # 354
@@ -31,7 +31,7 @@ envValueFrom: # 548
 
 grafana.ini: # 876
   server:
-    root_url: http://192.168.64.100/grafana
+    root_url: http://192.168.64.90/grafana
   database:
     type: mysql
     host: mariadb.mariadb:3306

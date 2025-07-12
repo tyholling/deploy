@@ -38,7 +38,7 @@ provider "kubernetes" {
 }
 
 provider "mysql" {
-  endpoint = "192.168.64.101:3306"
+  endpoint = "192.168.64.91:3306"
   username = "root"
   password = random_string.mariadb-root-password.result
 }
@@ -359,6 +359,7 @@ resource "helm_release" "opentelemetry-operator" {
   values     = [file("${path.module}/opentelemetry-operator-values.yaml")]
 
   depends_on = [
+    helm_release.cert-manager,
     helm_release.flannel,
     kubernetes_namespace.opentel,
   ]

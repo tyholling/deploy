@@ -19,3 +19,5 @@ speaker: # 262
     requests:
       cpu: 10m
       memory: 10Mi
+  frr: # 335
+    enabled: false # 336

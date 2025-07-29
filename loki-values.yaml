@@ -52,3 +52,7 @@ resultsCache: # 3252
 
 chunksCache: # 3352
   enabled: false # 3354
+
+sidecar: # 3583
+  rules: # 3616
+    enabled: false # 3618

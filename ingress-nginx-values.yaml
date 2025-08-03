@@ -2,7 +2,6 @@ fullnameOverride: ingress-nginx # 12
 
 controller: # 22
   config: # 56
-    force-ssl-redirect: "true"
     worker-processes: 1
   ingressClassResource: # 125
     default: true

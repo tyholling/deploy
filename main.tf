@@ -61,49 +61,6 @@ resource "helm_release" "flannel" {
   depends_on = [kubernetes_namespace.flannel]
 }
 
-resource "kubernetes_namespace" "certmgr" {
-  metadata {
-    name = "certmgr"
-  }
-}
-
-resource "helm_release" "cert-manager" {
-  name       = "cert-manager"
-  repository = "https://charts.jetstack.io"
-  chart      = "cert-manager"
-  namespace  = kubernetes_namespace.certmgr.metadata[0].name
-  values     = [file("${path.module}/cert-manager-values.yaml")]
-
-  depends_on = [
-    helm_release.flannel,
-    kubernetes_namespace.certmgr,
-  ]
-}
-
-resource "kubectl_manifest" "cert-manager-self-signed-issuer" {
-  yaml_body = file("cert-manager-self-signed-issuer.yaml")
-
-  depends_on = [helm_release.cert-manager]
-}
-
-resource "kubectl_manifest" "cert-manager-ca-cert" {
-  yaml_body = file("cert-manager-ca-cert.yaml")
-
-  depends_on = [
-    helm_release.cert-manager,
-    kubectl_manifest.cert-manager-self-signed-issuer,
-  ]
-}
-
-resource "kubectl_manifest" "cert-manager-cluster-issuer" {
-  yaml_body = file("cert-manager-cluster-issuer.yaml")
-
-  depends_on = [
-    helm_release.cert-manager,
-    kubectl_manifest.cert-manager-ca-cert,
-  ]
-}
-
 resource "kubernetes_namespace" "localpv" {
   metadata {
     name = "localpv"
@@ -186,7 +143,6 @@ resource "helm_release" "ingress-nginx" {
   values     = [file("${path.module}/ingress-nginx-values.yaml")]
 
   depends_on = [
-    helm_release.cert-manager,
     helm_release.metallb,
     kubernetes_namespace.ingress,
   ]
@@ -326,8 +282,8 @@ resource "helm_release" "grafana" {
   depends_on = [
     helm_release.ingress-nginx,
     helm_release.mariadb,
-    mysql_grant.grafana,
     kubernetes_namespace.grafana,
+    mysql_grant.grafana,
   ]
 }
 
@@ -359,7 +315,6 @@ resource "helm_release" "opentelemetry-operator" {
   values     = [file("${path.module}/opentelemetry-operator-values.yaml")]
 
   depends_on = [
-    helm_release.cert-manager,
     helm_release.flannel,
     kubernetes_namespace.opentel,
   ]

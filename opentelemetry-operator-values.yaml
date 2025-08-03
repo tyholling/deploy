@@ -7,3 +7,7 @@ manager: # 43
 
 kubeRBACProxy: # 225
   enabled: false # 226
+
+admissionWebhooks: # 258
+  certManager: # 284
+    enabled: false # 285

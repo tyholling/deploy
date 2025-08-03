@@ -6,16 +6,11 @@ deploymentStrategy: # 77
 ingress: # 280
   enabled: true
   annotations:
-    cert-manager.io/issuer: cluster-issuer
     nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/use-regex: "true"
   path: /grafana/?(.*)
   pathType: ImplementationSpecific
   hosts: []
-  tls:
-  - hosts:
-    - 192.168.64.90
-    secretName: grafana-tls
 
 resources: # 354
   limits: null

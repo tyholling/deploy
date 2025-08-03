@@ -27,13 +27,11 @@ spec:
         start_at: beginning
 
     exporters:
-      loki:
-        endpoint: http://loki.grafana:3100/loki/api/v1/push
-        tls:
-          insecure: true
+      otlphttp:
+        endpoint: http://loki.grafana:3100/otlp
 
     service:
       pipelines:
         logs:
           receivers: [filelog]
-          exporters: [loki]
+          exporters: [otlphttp]

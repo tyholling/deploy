@@ -4,7 +4,7 @@ metadata:
   name: logs
   namespace: opentel
 spec:
-  image: otel/opentelemetry-collector-contrib
+  image: docker.io/otel/opentelemetry-collector-contrib
   mode: daemonset
   resources:
     limits: null

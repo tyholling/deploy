@@ -1,3 +1,6 @@
+global: # 5
+  imageRegistry: docker.io # 8
+
 localpv: # 26
   updateStrategy: # 34
     rollingUpdate:

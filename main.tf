@@ -1,3 +1,5 @@
+// providers ///////////////////////////////////////////////////////////////////////////////////////
+
 terraform {
   required_providers {
     helm = {
@@ -14,6 +16,10 @@ terraform {
     }
     mysql = {
       source  = "petoju/mysql"
+      version = "~> 3"
+    }
+    null = {
+      source  = "hashicorp/null"
       version = "~> 3"
     }
     random = {
@@ -45,6 +51,8 @@ provider "mysql" {
 
 provider "random" {}
 
+// flannel /////////////////////////////////////////////////////////////////////////////////////////
+
 resource "kubernetes_namespace" "flannel" {
   metadata {
     name = "flannel"
@@ -57,9 +65,9 @@ resource "helm_release" "flannel" {
   chart      = "flannel"
   namespace  = kubernetes_namespace.flannel.metadata[0].name
   values     = [file("${path.module}/flannel-values.yaml")]
-
-  depends_on = [kubernetes_namespace.flannel]
 }
+
+// localpv /////////////////////////////////////////////////////////////////////////////////////////
 
 resource "kubernetes_namespace" "localpv" {
   metadata {
@@ -74,11 +82,10 @@ resource "helm_release" "localpv-provisioner" {
   namespace  = kubernetes_namespace.localpv.metadata[0].name
   values     = [file("${path.module}/localpv-provisioner-values.yaml")]
 
-  depends_on = [
-    helm_release.flannel,
-    kubernetes_namespace.localpv,
-  ]
+  depends_on = [helm_release.flannel]
 }
+
+// metallb /////////////////////////////////////////////////////////////////////////////////////////
 
 resource "kubernetes_namespace" "metallb" {
   metadata {
@@ -93,10 +100,7 @@ resource "helm_release" "metallb" {
   namespace  = kubernetes_namespace.metallb.metadata[0].name
   values     = [file("${path.module}/metallb-values.yaml")]
 
-  depends_on = [
-    helm_release.flannel,
-    kubernetes_namespace.metallb,
-  ]
+  depends_on = [helm_release.flannel]
 }
 
 resource "kubectl_manifest" "metallb-ip-address-pool" {
@@ -111,6 +115,16 @@ resource "kubectl_manifest" "metallb-l2-advertisement" {
   depends_on = [helm_release.metallb]
 }
 
+resource "null_resource" "metallb" {
+  depends_on = [
+    helm_release.metallb,
+    kubectl_manifest.metallb-ip-address-pool,
+    kubectl_manifest.metallb-l2-advertisement,
+  ]
+}
+
+// metrics /////////////////////////////////////////////////////////////////////////////////////////
+
 resource "kubernetes_namespace" "metrics" {
   metadata {
     name = "metrics"
@@ -124,11 +138,34 @@ resource "helm_release" "metrics-server" {
   namespace  = kubernetes_namespace.metrics.metadata[0].name
   values     = [file("${path.module}/metrics-server-values.yaml")]
 
-  depends_on = [
-    helm_release.flannel,
-    kubernetes_namespace.metrics,
-  ]
+  depends_on = [helm_release.flannel]
 }
+
+// opentel /////////////////////////////////////////////////////////////////////////////////////////
+
+resource "kubernetes_namespace" "opentel" {
+  metadata {
+    name = "opentel"
+  }
+}
+
+resource "helm_release" "opentelemetry-operator" {
+  name       = "opentelemetry-operator"
+  repository = "https://open-telemetry.github.io/opentelemetry-helm-charts"
+  chart      = "opentelemetry-operator"
+  namespace  = kubernetes_namespace.opentel.metadata[0].name
+  values     = [file("${path.module}/opentelemetry-operator-values.yaml")]
+
+  depends_on = [helm_release.flannel]
+}
+
+resource "kubectl_manifest" "logs-collector" {
+  yaml_body = file("logs-collector.yaml")
+
+  depends_on = [helm_release.opentelemetry-operator]
+}
+
+// ingress /////////////////////////////////////////////////////////////////////////////////////////
 
 resource "kubernetes_namespace" "ingress" {
   metadata {
@@ -142,11 +179,10 @@ resource "helm_release" "ingress-nginx" {
   namespace  = kubernetes_namespace.ingress.metadata[0].name
   values     = [file("${path.module}/ingress-nginx-values.yaml")]
 
-  depends_on = [
-    helm_release.metallb,
-    kubernetes_namespace.ingress,
-  ]
+  depends_on = [null_resource.metallb]
 }
+
+// mariadb /////////////////////////////////////////////////////////////////////////////////////////
 
 resource "kubernetes_namespace" "mariadb" {
   metadata {
@@ -173,17 +209,6 @@ resource "kubernetes_secret" "mariadb-credentials-mariadb" {
   }
 }
 
-resource "kubernetes_secret" "mariadb-credentials-grafana" {
-  metadata {
-    name      = "mariadb-credentials"
-    namespace = kubernetes_namespace.grafana.metadata[0].name
-  }
-  type = "Opaque"
-  data = {
-    "mariadb-grafana-password" = random_string.mariadb-grafana-password.result
-  }
-}
-
 resource "helm_release" "mariadb" {
   name       = "mariadb"
   repository = "oci://registry-1.docker.io/bitnamicharts"
@@ -196,17 +221,23 @@ resource "helm_release" "mariadb" {
   }]
 
   depends_on = [
-    helm_release.flannel,
     helm_release.localpv-provisioner,
-    helm_release.metallb,
-    kubernetes_namespace.mariadb,
+    null_resource.metallb,
   ]
+}
+
+// grafana /////////////////////////////////////////////////////////////////////////////////////////
+
+resource "kubernetes_namespace" "grafana" {
+  metadata {
+    name = "grafana"
+  }
 }
 
 resource "mysql_database" "grafana" {
   name = "grafana"
 
-  depends_on = [helm_release.mariadb, ]
+  depends_on = [helm_release.mariadb]
 }
 
 resource "random_string" "mariadb-grafana-password" {
@@ -238,12 +269,6 @@ resource "mysql_grant" "grafana" {
   ]
 }
 
-resource "kubernetes_namespace" "grafana" {
-  metadata {
-    name = "grafana"
-  }
-}
-
 resource "random_string" "grafana-password" {
   length  = 32
   special = false
@@ -268,6 +293,17 @@ resource "kubernetes_secret" "grafana-credentials" {
   }
 }
 
+resource "kubernetes_secret" "grafana-mariadb-credentials" {
+  metadata {
+    name      = "mariadb-credentials"
+    namespace = kubernetes_namespace.grafana.metadata[0].name
+  }
+  type = "Opaque"
+  data = {
+    "mariadb-grafana-password" = random_string.mariadb-grafana-password.result
+  }
+}
+
 resource "helm_release" "grafana" {
   name       = "grafana"
   repository = "https://grafana.github.io/helm-charts"
@@ -282,7 +318,7 @@ resource "helm_release" "grafana" {
   depends_on = [
     helm_release.ingress-nginx,
     helm_release.mariadb,
-    kubernetes_namespace.grafana,
+    kubernetes_secret.grafana-mariadb-credentials,
     mysql_grant.grafana,
   ]
 }
@@ -295,33 +331,8 @@ resource "helm_release" "loki" {
   values     = [file("${path.module}/loki-values.yaml")]
 
   depends_on = [
-    helm_release.flannel,
     helm_release.localpv-provisioner,
-    kubernetes_namespace.grafana,
   ]
 }
 
-resource "kubernetes_namespace" "opentel" {
-  metadata {
-    name = "opentel"
-  }
-}
-
-resource "helm_release" "opentelemetry-operator" {
-  name       = "opentelemetry-operator"
-  repository = "https://open-telemetry.github.io/opentelemetry-helm-charts"
-  chart      = "opentelemetry-operator"
-  namespace  = kubernetes_namespace.opentel.metadata[0].name
-  values     = [file("${path.module}/opentelemetry-operator-values.yaml")]
-
-  depends_on = [
-    helm_release.flannel,
-    kubernetes_namespace.opentel,
-  ]
-}
-
-resource "kubectl_manifest" "logs-collector" {
-  yaml_body = file("logs-collector.yaml")
-
-  depends_on = [helm_release.opentelemetry-operator]
-}
+////////////////////////////////////////////////////////////////////////////////////////////////////

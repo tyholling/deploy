@@ -1,0 +1,30 @@
+resources: # 212
+  limits: null
+  requests:
+    cpu: 10m
+    memory: 10Mi
+
+config: # 382
+  inputs: | # 396
+    [INPUT]
+        Name tail
+        Path /var/log/containers/*.log
+        # Tag kube.*
+        # Mem_Buf_Limit 5MB
+        # Skip_Long_Lines On
+
+  filters: | # 412
+    [FILTER]
+        Name kubernetes
+        Match kube.*
+        Merge_Log On
+        Keep_Log Off
+        K8S-Logging.Parser On
+        K8S-Logging.Exclude On
+
+  outputs: | # 422
+    [OUTPUT]
+        Name loki
+        Match *
+        Host loki.grafana
+        Port 3100

@@ -1,0 +1,43 @@
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: node
+  namespace: opentel
+spec:
+  image: mirror.gcr.io/otel/opentelemetry-collector-contrib
+  mode: daemonset
+  resources:
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
+  tolerations:
+  - key: node-role.kubernetes.io/control-plane
+  config:
+    receivers:
+      hostmetrics:
+        collection_interval: 10s
+        scrapers:
+          cpu: {}
+          disk: {}
+          filesystem: {}
+          load: {}
+          memory: {}
+          network: {}
+          paging: {}
+          process: {}
+          processes: {}
+          system: {}
+      kubeletstats:
+        auth_type: none
+        collection_interval: 10s
+
+    exporters:
+      debug:
+        verbosity: normal
+
+    service:
+      pipelines:
+        metrics:
+          receivers: [hostmetrics, kubeletstats]
+          exporters: [debug]

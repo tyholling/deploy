@@ -4,23 +4,15 @@ resources: # 212
     cpu: 10m
     memory: 10Mi
 
+tolerations: # 298
+- key: node-role.kubernetes.io/control-plane
+
 config: # 382
   inputs: | # 396
     [INPUT]
         Name tail
         Path /var/log/containers/*.log
-        # Tag kube.*
-        # Mem_Buf_Limit 5MB
-        # Skip_Long_Lines On
-
-  filters: | # 412
-    [FILTER]
-        Name kubernetes
-        Match kube.*
-        Merge_Log On
-        Keep_Log Off
-        K8S-Logging.Parser On
-        K8S-Logging.Exclude On
+        refresh_interval 1
 
   outputs: | # 422
     [OUTPUT]

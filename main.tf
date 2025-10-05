@@ -169,6 +169,12 @@ resource "helm_release" "opentelemetry-operator" {
   depends_on = [helm_release.flannel]
 }
 
+resource "kubectl_manifest" "node-collector" {
+  yaml_body = file("node-collector.yaml")
+
+  depends_on = [helm_release.opentelemetry-operator]
+}
+
 // ingress /////////////////////////////////////////////////////////////////////////////////////////
 
 resource "kubernetes_namespace" "ingress" {

@@ -1,0 +1,15 @@
+server: # 126
+  prefixURL: /prometheus
+  baseURL: http://192.168.64.90/prometheus
+  fullnameOverride: prometheus # 369
+  ingress: # 371
+    enabled: true # 374
+    hosts: [""] # 394
+    path: /prometheus # 398
+    pathType: Prefix # 401
+
+resources: # 694
+  limits: null
+  requests:
+    cpu: 10m
+    memory: 10Mi

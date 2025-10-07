@@ -350,7 +350,10 @@ resource "helm_release" "prometheus" {
   namespace  = kubernetes_namespace.grafana.metadata[0].name
   values     = [file("${path.module}/prometheus-values.yaml")]
 
-  depends_on = [helm_release.localpv-provisioner]
+  depends_on = [
+    helm_release.ingress-nginx,
+    helm_release.localpv-provisioner,
+  ]
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

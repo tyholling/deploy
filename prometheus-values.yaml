@@ -1,3 +1,7 @@
+configmapReload: # 30
+  prometheus: # 47
+    enabled: false # 50
+
 server: # 126
   prefixURL: /prometheus
   baseURL: http://192.168.64.90/prometheus
@@ -7,9 +11,22 @@ server: # 126
     hosts: [""] # 394
     path: /prometheus # 398
     pathType: Prefix # 401
+  persistentVolume: # 526
+    size: 10Gi # 563
+  resources: # 694
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
 
-resources: # 694
-  limits: null
-  requests:
-    cpu: 10m
-    memory: 10Mi
+alertmanager: # 1308
+  enabled: false # 1311
+
+kube-state-metrics: # 1351
+  enabled: false # 1354
+
+prometheus-node-exporter: # 1359
+  enabled: false # 1362
+
+prometheus-pushgateway: # 1373
+  enabled: false # 1376

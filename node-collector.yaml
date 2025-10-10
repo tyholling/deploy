@@ -18,26 +18,22 @@ spec:
       hostmetrics:
         collection_interval: 10s
         scrapers:
-          cpu: {}
-          disk: {}
-          filesystem: {}
-          load: {}
-          memory: {}
-          network: {}
-          paging: {}
-          process: {}
-          processes: {}
-          system: {}
-      kubeletstats:
-        auth_type: none
-        collection_interval: 10s
+          cpu:
+            metrics:
+              system.cpu.time:
+                enabled: true
+          memory:
+            metrics:
+              system.memory.usage:
+                enabled: true
 
     exporters:
-      debug:
-        verbosity: normal
+      prometheus:
+        endpoint: 0.0.0.0:9464
+        metric_expiration: 1m
 
     service:
       pipelines:
         metrics:
-          receivers: [hostmetrics, kubeletstats]
-          exporters: [debug]
+          receivers: [hostmetrics]
+          exporters: [prometheus]

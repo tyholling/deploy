@@ -1,3 +1,7 @@
+global: # 7
+  image: # 8
+    registry: mirror.gcr.io # 10
+
 deploymentMode: SingleBinary # 55
 
 loki: # 64

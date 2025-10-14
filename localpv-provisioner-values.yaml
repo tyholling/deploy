@@ -1,5 +1,5 @@
 global: # 5
-  imageRegistry: docker.io # 8
+  imageRegistry: mirror.gcr.io # 8
 
 localpv: # 26
   updateStrategy: # 34

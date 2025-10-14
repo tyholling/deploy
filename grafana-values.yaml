@@ -1,3 +1,6 @@
+global: #1
+  imageRegistry: mirror.gcr.io # 3
+
 deploymentStrategy: # 77
   rollingUpdate:
     maxSurge: 0

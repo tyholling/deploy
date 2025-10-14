@@ -1,3 +1,6 @@
+global: # 14
+  imageRegistry: docker.io # 15
+
 primary: # 275
   resources: # 506
     limits: null

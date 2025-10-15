@@ -85,6 +85,24 @@ resource "helm_release" "localpv-provisioner" {
   depends_on = [helm_release.flannel]
 }
 
+// logging /////////////////////////////////////////////////////////////////////////////////////////
+
+resource "kubernetes_namespace" "logging" {
+  metadata {
+    name = "logging"
+  }
+}
+
+resource "helm_release" "fluent-bit" {
+  name       = "fluent-bit"
+  repository = "https://fluent.github.io/helm-charts"
+  chart      = "fluent-bit"
+  namespace  = kubernetes_namespace.logging.metadata[0].name
+  values     = [file("${path.module}/fluent-bit-values.yaml")]
+
+  depends_on = [helm_release.flannel]
+}
+
 // metallb /////////////////////////////////////////////////////////////////////////////////////////
 
 resource "kubernetes_namespace" "metallb" {
@@ -147,16 +165,6 @@ resource "kubernetes_namespace" "opentel" {
   metadata {
     name = "opentel"
   }
-}
-
-resource "helm_release" "fluent-bit" {
-  name       = "fluent-bit"
-  repository = "https://fluent.github.io/helm-charts"
-  chart      = "fluent-bit"
-  namespace  = kubernetes_namespace.opentel.metadata[0].name
-  values     = [file("${path.module}/fluent-bit-values.yaml")]
-
-  depends_on = [helm_release.flannel]
 }
 
 resource "helm_release" "opentelemetry-operator" {

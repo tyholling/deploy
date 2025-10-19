@@ -364,6 +364,16 @@ resource "helm_release" "prometheus" {
   ]
 }
 
+resource "helm_release" "pyroscope" {
+  name       = "pyroscope"
+  repository = "https://grafana.github.io/helm-charts"
+  chart      = "pyroscope"
+  namespace  = kubernetes_namespace.grafana.metadata[0].name
+  values     = [file("${path.module}/pyroscope-values.yaml")]
+
+  depends_on = [helm_release.localpv-provisioner]
+}
+
 resource "helm_release" "tempo" {
   name       = "tempo"
   repository = "https://grafana.github.io/helm-charts"

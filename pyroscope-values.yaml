@@ -1,0 +1,11 @@
+pyroscope: # 6
+  image: # 15
+    repository: mirror.gcr.io/grafana/pyroscope # 16
+  resources: # 105
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
+
+alloy: # 449
+  enabled: false # 450

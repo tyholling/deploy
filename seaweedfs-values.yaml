@@ -1,0 +1,52 @@
+global: # 3
+  registry: mirror.gcr.io # 5
+
+  master: # 52
+    data: # 118
+      type: persistentVolumeClaim # 119
+      size: 10Gi # 120
+    logs: # 135
+      type: persistentVolumeClaim # 136
+      size: 10Gi # 137
+    resources: # 173
+      limits: null
+      requests:
+        cpu: 10m
+        memory: 10Mi
+
+volume: # 293
+  dataDirs: # 348
+  - name: swdata # 349
+    type: persistentVolumeClaim # 350
+    size: 10Gi # 351
+  resources: # 473
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
+
+filter: # 567
+  enablePVC: true # 629
+  storage: 10Gi  # 631
+  data: # 651
+    type: persistentVolumeClaim # 652
+    size: 10Gi # 653
+  logs: # 669
+    type: persistentVolumeClaim # 670
+    size: 10Gi # 671
+  resources: # 729
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
+
+s3: # 875
+  enabled: true # 876
+  resources: # 927
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
+  logs: # 971
+    type: persistentVolumeClaim # 972
+    size: 10Gi # 973

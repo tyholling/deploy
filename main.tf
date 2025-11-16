@@ -384,4 +384,25 @@ resource "helm_release" "tempo" {
   depends_on = [helm_release.localpv-provisioner]
 }
 
+// seaweed /////////////////////////////////////////////////////////////////////////////////////////
+
+resource "kubernetes_namespace" "seaweed" {
+  metadata {
+    name = "seaweed"
+  }
+}
+
+resource "helm_release" "seaweed" {
+  name       = "seaweedfs"
+  repository = "https://seaweedfs.github.io/seaweedfs/helm"
+  chart      = "seaweedfs"
+  namespace  = kubernetes_namespace.seaweed.metadata[0].name
+  values     = [file("${path.module}/seaweedfs-values.yaml")]
+
+  depends_on = [
+    helm_release.localpv-provisioner,
+    null_resource.metallb,
+  ]
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////

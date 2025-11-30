@@ -1,5 +1,6 @@
 tempo: # 23
-  repository: mirror.gcr.io/grafana/tempo # 24
+  registry: mirror.gcr.io # 24
+  repository: grafana/tempo # 25
   resources: # 35
     limits: null
     requests:

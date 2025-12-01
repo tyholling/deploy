@@ -6,14 +6,12 @@ deploymentStrategy: # 77
     maxSurge: 0
     maxUnavailable: 1
 
+service: # 231
+  type: LoadBalancer
+  loadBalancerIP: 192.168.64.90
+
 ingress: # 280
-  enabled: true
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
-    nginx.ingress.kubernetes.io/use-regex: "true"
-  path: /grafana/?(.*)
-  pathType: ImplementationSpecific
-  hosts: []
+  enabled: false
 
 resources: # 354
   limits: null
@@ -27,9 +25,20 @@ envValueFrom: # 548
       name: mariadb-credentials
       key: mariadb-grafana-password
 
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - name: loki
+      type: loki
+      access: proxy
+      url: http://loki:3100
+    - name: prometheus
+      type: prometheus
+      access: proxy
+      url: http://prometheus
+
 grafana.ini: # 876
-  server:
-    root_url: http://192.168.64.90/grafana
   database:
     type: mysql
     host: mariadb.mariadb:3306

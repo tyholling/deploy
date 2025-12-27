@@ -3,14 +3,8 @@ configmapReload: # 30
     enabled: false # 50
 
 server: # 126
-  prefixURL: /prometheus
-  baseURL: http://192.168.64.90/prometheus
+  configMapOverrideName: config
   fullnameOverride: prometheus # 369
-  ingress: # 371
-    enabled: true # 374
-    hosts: [""] # 394
-    path: /prometheus # 398
-    pathType: Prefix # 401
   persistentVolume: # 526
     size: 10Gi # 563
   resources: # 694
@@ -18,6 +12,10 @@ server: # 126
     requests:
       cpu: 10m
       memory: 10Mi
+  service: # 749
+    loadBalancerIP: 192.168.64.91
+    type: LoadBalancer
+  retention: 1h
 
 alertmanager: # 1308
   enabled: false # 1311

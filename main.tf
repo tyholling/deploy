@@ -44,7 +44,7 @@ provider "kubernetes" {
 }
 
 provider "mysql" {
-  endpoint = "192.168.64.91:3306"
+  endpoint = "192.168.64.99:3306"
   username = "root"
   password = random_string.mariadb-root-password.result
 }
@@ -157,47 +157,6 @@ resource "helm_release" "metrics-server" {
   values     = [file("${path.module}/metrics-server-values.yaml")]
 
   depends_on = [helm_release.flannel]
-}
-
-// opentel /////////////////////////////////////////////////////////////////////////////////////////
-
-resource "kubernetes_namespace" "opentel" {
-  metadata {
-    name = "opentel"
-  }
-}
-
-resource "helm_release" "opentelemetry-operator" {
-  name       = "opentelemetry-operator"
-  repository = "https://open-telemetry.github.io/opentelemetry-helm-charts"
-  chart      = "opentelemetry-operator"
-  namespace  = kubernetes_namespace.opentel.metadata[0].name
-  values     = [file("${path.module}/opentelemetry-operator-values.yaml")]
-
-  depends_on = [helm_release.flannel]
-}
-
-resource "kubectl_manifest" "node-collector" {
-  yaml_body = file("node-collector.yaml")
-
-  depends_on = [helm_release.opentelemetry-operator]
-}
-
-// ingress /////////////////////////////////////////////////////////////////////////////////////////
-
-resource "kubernetes_namespace" "ingress" {
-  metadata {
-    name = "ingress"
-  }
-}
-resource "helm_release" "ingress-nginx" {
-  name       = "ingress-nginx"
-  repository = "https://kubernetes.github.io/ingress-nginx"
-  chart      = "ingress-nginx"
-  namespace  = kubernetes_namespace.ingress.metadata[0].name
-  values     = [file("${path.module}/ingress-nginx-values.yaml")]
-
-  depends_on = [null_resource.metallb]
 }
 
 // mariadb /////////////////////////////////////////////////////////////////////////////////////////
@@ -334,7 +293,6 @@ resource "helm_release" "grafana" {
   }]
 
   depends_on = [
-    helm_release.ingress-nginx,
     helm_release.mariadb,
     kubernetes_secret.grafana-mariadb-credentials,
     mysql_grant.grafana,
@@ -351,6 +309,10 @@ resource "helm_release" "loki" {
   depends_on = [helm_release.localpv-provisioner]
 }
 
+resource "kubectl_manifest" "prometheus-configmap" {
+  yaml_body = file("prometheus-configmap.yaml")
+}
+
 resource "helm_release" "prometheus" {
   name       = "prometheus"
   repository = "https://prometheus-community.github.io/helm-charts"
@@ -359,49 +321,8 @@ resource "helm_release" "prometheus" {
   values     = [file("${path.module}/prometheus-values.yaml")]
 
   depends_on = [
-    helm_release.ingress-nginx,
     helm_release.localpv-provisioner,
-  ]
-}
-
-resource "helm_release" "pyroscope" {
-  name       = "pyroscope"
-  repository = "https://grafana.github.io/helm-charts"
-  chart      = "pyroscope"
-  namespace  = kubernetes_namespace.grafana.metadata[0].name
-  values     = [file("${path.module}/pyroscope-values.yaml")]
-
-  depends_on = [helm_release.localpv-provisioner]
-}
-
-resource "helm_release" "tempo" {
-  name       = "tempo"
-  repository = "https://grafana.github.io/helm-charts"
-  chart      = "tempo"
-  namespace  = kubernetes_namespace.grafana.metadata[0].name
-  values     = [file("${path.module}/tempo-values.yaml")]
-
-  depends_on = [helm_release.localpv-provisioner]
-}
-
-// seaweed /////////////////////////////////////////////////////////////////////////////////////////
-
-resource "kubernetes_namespace" "seaweed" {
-  metadata {
-    name = "seaweed"
-  }
-}
-
-resource "helm_release" "seaweed" {
-  name       = "seaweedfs"
-  repository = "https://seaweedfs.github.io/seaweedfs/helm"
-  chart      = "seaweedfs"
-  namespace  = kubernetes_namespace.seaweed.metadata[0].name
-  values     = [file("${path.module}/seaweedfs-values.yaml")]
-
-  depends_on = [
-    helm_release.localpv-provisioner,
-    null_resource.metallb,
+    kubectl_manifest.prometheus-configmap,
   ]
 }
 

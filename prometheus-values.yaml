@@ -5,8 +5,6 @@ configmapReload: # 30
 server: # 126
   configMapOverrideName: config
   fullnameOverride: prometheus # 369
-  ingress: # 371
-    enabled: false # 374
   persistentVolume: # 526
     size: 10Gi # 563
   resources: # 694
@@ -17,7 +15,7 @@ server: # 126
   service: # 749
     loadBalancerIP: 192.168.64.91
     type: LoadBalancer
-  retention: 10m
+  retention: 1h
 
 alertmanager: # 1308
   enabled: false # 1311

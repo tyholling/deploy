@@ -323,6 +323,10 @@ resource "helm_release" "prometheus" {
   chart      = "prometheus"
   namespace  = kubernetes_namespace.grafana.metadata[0].name
   values     = [file("${path.module}/prometheus-values.yaml")]
+  set = [{
+    name  = "server.podLabels.config-md5"
+    value = filemd5("${path.module}/prometheus-configmap.yaml")
+  }]
 
   depends_on = [
     helm_release.localpv-provisioner,

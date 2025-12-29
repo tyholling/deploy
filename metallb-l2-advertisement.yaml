@@ -3,5 +3,6 @@ kind: L2Advertisement
 metadata:
   name: l2-advertisement
   namespace: metallb
-  labels:
-    test: one
+spec:
+  ipAddressPools:
+  - ip-address-pool

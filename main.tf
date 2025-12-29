@@ -296,6 +296,7 @@ resource "helm_release" "grafana" {
     helm_release.mariadb,
     kubernetes_secret.grafana-mariadb-credentials,
     mysql_grant.grafana,
+    null_resource.metallb,
   ]
 }
 
@@ -306,7 +307,10 @@ resource "helm_release" "loki" {
   namespace  = kubernetes_namespace.grafana.metadata[0].name
   values     = [file("${path.module}/loki-values.yaml")]
 
-  depends_on = [helm_release.localpv-provisioner]
+  depends_on = [
+    helm_release.flannel,
+    helm_release.localpv-provisioner,
+  ]
 }
 
 resource "kubectl_manifest" "prometheus-configmap" {
@@ -323,6 +327,7 @@ resource "helm_release" "prometheus" {
   depends_on = [
     helm_release.localpv-provisioner,
     kubectl_manifest.prometheus-configmap,
+    null_resource.metallb,
   ]
 }
 

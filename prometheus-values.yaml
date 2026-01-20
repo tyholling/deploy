@@ -24,7 +24,13 @@ kube-state-metrics: # 1351
   enabled: false # 1354
 
 prometheus-node-exporter: # 1359
-  enabled: false # 1362
+  enabled: true # 1362
+  fullnameOverride: node-exporter # 15
+  resources: # 332
+    limits: null
+    requests:
+      cpu: 10m
+      memory: 10Mi
 
 prometheus-pushgateway: # 1373
   enabled: false # 1376

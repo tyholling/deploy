@@ -335,4 +335,14 @@ resource "helm_release" "prometheus" {
   ]
 }
 
+resource "helm_release" "node-exporter" {
+  name       = "node-exporter"
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart      = "prometheus-node-exporter"
+  namespace  = kubernetes_namespace.grafana.metadata[0].name
+  values     = [file("${path.module}/node-exporter-values.yaml")]
+
+  depends_on = [helm_release.flannel]
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////

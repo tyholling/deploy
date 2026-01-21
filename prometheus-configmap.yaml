@@ -28,7 +28,7 @@ data:
           own_namespace: true
         selectors:
         - role: endpointslice
-          label: app.kubernetes.io/name=prometheus-node-exporter
+          label: app.kubernetes.io/instance=node-exporter
       relabel_configs:
       - source_labels:
         - __meta_kubernetes_endpointslice_endpoint_node_name

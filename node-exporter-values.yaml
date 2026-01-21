@@ -1,4 +1,4 @@
-fullnameOverride: node-exporter #
+fullnameOverride: node-exporter # 15
 
 resources: # 332
   limits: null

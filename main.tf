@@ -18,10 +18,6 @@ terraform {
       source  = "petoju/mysql"
       version = "~> 3"
     }
-    null = {
-      source  = "hashicorp/null"
-      version = "~> 3"
-    }
     random = {
       source  = "hashicorp/random"
       version = "~> 3"
@@ -133,7 +129,7 @@ resource "kubectl_manifest" "metallb-l2-advertisement" {
   depends_on = [helm_release.metallb]
 }
 
-resource "null_resource" "metallb" {
+resource "terraform_data" "metallb" {
   depends_on = [
     helm_release.metallb,
     kubectl_manifest.metallb-ip-address-pool,
@@ -199,7 +195,7 @@ resource "helm_release" "mariadb" {
 
   depends_on = [
     helm_release.localpv-provisioner,
-    null_resource.metallb,
+    terraform_data.metallb,
   ]
 }
 
@@ -296,7 +292,7 @@ resource "helm_release" "grafana" {
     helm_release.mariadb,
     kubernetes_secret.grafana-mariadb-credentials,
     mysql_grant.grafana,
-    null_resource.metallb,
+    terraform_data.metallb,
   ]
 }
 
@@ -331,7 +327,7 @@ resource "helm_release" "prometheus" {
   depends_on = [
     helm_release.localpv-provisioner,
     kubectl_manifest.prometheus-configmap,
-    null_resource.metallb,
+    terraform_data.metallb,
   ]
 }
 

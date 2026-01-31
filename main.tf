@@ -12,7 +12,7 @@ terraform {
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2"
+      version = "~> 3"
     }
     mysql = {
       source  = "petoju/mysql"
@@ -50,7 +50,7 @@ provider "random" {}
 
 // flannel /////////////////////////////////////////////////////////////////////////////////////////
 
-resource "kubernetes_namespace" "flannel" {
+resource "kubernetes_namespace_v1" "flannel" {
   metadata {
     name = "flannel"
   }
@@ -60,13 +60,13 @@ resource "helm_release" "flannel" {
   name       = "flannel"
   repository = "https://flannel-io.github.io/flannel"
   chart      = "flannel"
-  namespace  = kubernetes_namespace.flannel.metadata[0].name
+  namespace  = kubernetes_namespace_v1.flannel.metadata[0].name
   values     = [file("${path.module}/flannel-values.yaml")]
 }
 
 // localpv /////////////////////////////////////////////////////////////////////////////////////////
 
-resource "kubernetes_namespace" "localpv" {
+resource "kubernetes_namespace_v1" "localpv" {
   metadata {
     name = "localpv"
   }
@@ -76,7 +76,7 @@ resource "helm_release" "localpv-provisioner" {
   name       = "localpv-provisioner"
   repository = "https://openebs.github.io/dynamic-localpv-provisioner"
   chart      = "localpv-provisioner"
-  namespace  = kubernetes_namespace.localpv.metadata[0].name
+  namespace  = kubernetes_namespace_v1.localpv.metadata[0].name
   values     = [file("${path.module}/localpv-provisioner-values.yaml")]
 
   depends_on = [helm_release.flannel]
@@ -84,7 +84,7 @@ resource "helm_release" "localpv-provisioner" {
 
 // logging /////////////////////////////////////////////////////////////////////////////////////////
 
-resource "kubernetes_namespace" "logging" {
+resource "kubernetes_namespace_v1" "logging" {
   metadata {
     name = "logging"
   }
@@ -94,7 +94,7 @@ resource "helm_release" "fluent-bit" {
   name       = "fluent-bit"
   repository = "https://fluent.github.io/helm-charts"
   chart      = "fluent-bit"
-  namespace  = kubernetes_namespace.logging.metadata[0].name
+  namespace  = kubernetes_namespace_v1.logging.metadata[0].name
   values     = [file("${path.module}/fluent-bit-values.yaml")]
 
   depends_on = [helm_release.flannel]
@@ -102,7 +102,7 @@ resource "helm_release" "fluent-bit" {
 
 // metallb /////////////////////////////////////////////////////////////////////////////////////////
 
-resource "kubernetes_namespace" "metallb" {
+resource "kubernetes_namespace_v1" "metallb" {
   metadata {
     name = "metallb"
   }
@@ -112,7 +112,7 @@ resource "helm_release" "metallb" {
   name       = "metallb"
   repository = "https://metallb.github.io/metallb"
   chart      = "metallb"
-  namespace  = kubernetes_namespace.metallb.metadata[0].name
+  namespace  = kubernetes_namespace_v1.metallb.metadata[0].name
   values     = [file("${path.module}/metallb-values.yaml")]
 
   depends_on = [helm_release.flannel]
@@ -140,7 +140,7 @@ resource "terraform_data" "metallb" {
 
 // metrics /////////////////////////////////////////////////////////////////////////////////////////
 
-resource "kubernetes_namespace" "metrics" {
+resource "kubernetes_namespace_v1" "metrics" {
   metadata {
     name = "metrics"
   }
@@ -150,7 +150,7 @@ resource "helm_release" "metrics-server" {
   name       = "metrics-server"
   repository = "https://kubernetes-sigs.github.io/metrics-server"
   chart      = "metrics-server"
-  namespace  = kubernetes_namespace.metrics.metadata[0].name
+  namespace  = kubernetes_namespace_v1.metrics.metadata[0].name
   values     = [file("${path.module}/metrics-server-values.yaml")]
 
   depends_on = [helm_release.flannel]
@@ -158,7 +158,7 @@ resource "helm_release" "metrics-server" {
 
 // mariadb /////////////////////////////////////////////////////////////////////////////////////////
 
-resource "kubernetes_namespace" "mariadb" {
+resource "kubernetes_namespace_v1" "mariadb" {
   metadata {
     name = "mariadb"
   }
@@ -172,10 +172,10 @@ resource "random_string" "mariadb-root-password" {
   numeric = true
 }
 
-resource "kubernetes_secret" "mariadb-credentials-mariadb" {
+resource "kubernetes_secret_v1" "mariadb-credentials-mariadb" {
   metadata {
     name      = "mariadb-credentials"
-    namespace = kubernetes_namespace.mariadb.metadata[0].name
+    namespace = kubernetes_namespace_v1.mariadb.metadata[0].name
   }
   type = "Opaque"
   data = {
@@ -187,11 +187,11 @@ resource "helm_release" "mariadb" {
   name       = "mariadb"
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "mariadb"
-  namespace  = kubernetes_namespace.mariadb.metadata[0].name
+  namespace  = kubernetes_namespace_v1.mariadb.metadata[0].name
   values     = [file("${path.module}/mariadb-values.yaml")]
   set = [{
     name  = "auth.existingSecret"
-    value = kubernetes_secret.mariadb-credentials-mariadb.metadata[0].name
+    value = kubernetes_secret_v1.mariadb-credentials-mariadb.metadata[0].name
   }]
 
   depends_on = [
@@ -202,7 +202,7 @@ resource "helm_release" "mariadb" {
 
 // grafana /////////////////////////////////////////////////////////////////////////////////////////
 
-resource "kubernetes_namespace" "grafana" {
+resource "kubernetes_namespace_v1" "grafana" {
   metadata {
     name = "grafana"
   }
@@ -255,10 +255,10 @@ output "grafana-password" {
   value = random_string.grafana-password.result
 }
 
-resource "kubernetes_secret" "grafana-credentials" {
+resource "kubernetes_secret_v1" "grafana-credentials" {
   metadata {
     name      = "grafana-credentials"
-    namespace = kubernetes_namespace.grafana.metadata[0].name
+    namespace = kubernetes_namespace_v1.grafana.metadata[0].name
   }
   type = "Opaque"
   data = {
@@ -267,10 +267,10 @@ resource "kubernetes_secret" "grafana-credentials" {
   }
 }
 
-resource "kubernetes_secret" "grafana-mariadb-credentials" {
+resource "kubernetes_secret_v1" "grafana-mariadb-credentials" {
   metadata {
     name      = "mariadb-credentials"
-    namespace = kubernetes_namespace.grafana.metadata[0].name
+    namespace = kubernetes_namespace_v1.grafana.metadata[0].name
   }
   type = "Opaque"
   data = {
@@ -282,16 +282,16 @@ resource "helm_release" "grafana" {
   name       = "grafana"
   repository = "https://grafana.github.io/helm-charts"
   chart      = "grafana"
-  namespace  = kubernetes_namespace.grafana.metadata[0].name
+  namespace  = kubernetes_namespace_v1.grafana.metadata[0].name
   values     = [file("${path.module}/grafana-values.yaml")]
   set = [{
     name  = "admin.existingSecret"
-    value = kubernetes_secret.grafana-credentials.metadata[0].name
+    value = kubernetes_secret_v1.grafana-credentials.metadata[0].name
   }]
 
   depends_on = [
     helm_release.mariadb,
-    kubernetes_secret.grafana-mariadb-credentials,
+    kubernetes_secret_v1.grafana-mariadb-credentials,
     mysql_grant.grafana,
     terraform_data.metallb,
   ]
@@ -301,7 +301,7 @@ resource "helm_release" "loki" {
   name       = "loki"
   repository = "https://grafana.github.io/helm-charts"
   chart      = "loki"
-  namespace  = kubernetes_namespace.grafana.metadata[0].name
+  namespace  = kubernetes_namespace_v1.grafana.metadata[0].name
   values     = [file("${path.module}/loki-values.yaml")]
 
   depends_on = [
@@ -318,7 +318,7 @@ resource "helm_release" "prometheus" {
   name       = "prometheus"
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "prometheus"
-  namespace  = kubernetes_namespace.grafana.metadata[0].name
+  namespace  = kubernetes_namespace_v1.grafana.metadata[0].name
   values     = [file("${path.module}/prometheus-values.yaml")]
   set = [{
     name  = "server.podLabels.config-md5"
@@ -336,7 +336,7 @@ resource "helm_release" "node-exporter" {
   name       = "node-exporter"
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "prometheus-node-exporter"
-  namespace  = kubernetes_namespace.grafana.metadata[0].name
+  namespace  = kubernetes_namespace_v1.grafana.metadata[0].name
   values     = [file("${path.module}/node-exporter-values.yaml")]
 
   depends_on = [helm_release.flannel]

@@ -23,6 +23,7 @@ terraform {
       version = "~> 3"
     }
   }
+  required_version = "~> 1"
 }
 
 provider "helm" {

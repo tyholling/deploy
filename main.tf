@@ -4,26 +4,26 @@ terraform {
   required_providers {
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 3"
+      version = "~> 3.0"
     }
     kubectl = {
       source  = "alekc/kubectl"
-      version = "~> 2"
+      version = "~> 2.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 3"
+      version = "~> 3.0"
     }
     mysql = {
       source  = "petoju/mysql"
-      version = "~> 3"
+      version = "~> 3.0"
     }
     random = {
       source  = "hashicorp/random"
-      version = "~> 3"
+      version = "~> 3.0"
     }
   }
-  required_version = "~> 1"
+  required_version = "~> 1.0"
 }
 
 provider "helm" {

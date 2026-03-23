@@ -6,13 +6,14 @@ localpv: # 26
     rollingUpdate:
       maxSurge: 0
       maxUnavaiable: 1
-  resources: # 49
+  enableLeaderElection: false # 47
+  resources: # 62
     limits: null
     requests:
       cpu: 10m
       memory: 10Mi
 
-fullnameOverride: localpv-provisioner # 74
+fullnameOverride: localpv-provisioner # 86
 
-hostpathClass: # 85
-  isDefaultClass: true # 93
+hostpathClass: # 97
+  isDefaultClass: true # 105

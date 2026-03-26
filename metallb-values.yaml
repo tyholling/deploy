@@ -1,4 +1,6 @@
 controller: # 197
+  image: # 203
+    repository: quay.io/metallb/controller
   strategy: # 216
     rollingUpdate:
       maxSurge: 0
@@ -10,6 +12,8 @@ controller: # 197
       memory: 10Mi
 
 speaker: # 262
+  image: # 279
+    repository: quay.io/metallb/speaker
   updateStrategy: # 286
     rollingUpdate:
       maxSurge: 0
@@ -20,4 +24,4 @@ speaker: # 262
       cpu: 10m
       memory: 10Mi
   frr: # 335
-    enabled: false # 336
+    enabled: false

@@ -1,20 +1,23 @@
+image: # 9
+  repository: ghcr.io/fluent/fluent-bit
+
 resources: # 212
   limits: null
   requests:
     cpu: 10m
     memory: 10Mi
 
-tolerations: # 298
+tolerations: # 301
 - key: node-role.kubernetes.io/control-plane
 
-config: # 382
-  inputs: | # 396
+config: # 385
+  inputs: | # 399
     [INPUT]
         Name tail
         Path /var/log/containers/*.log
         refresh_interval 1
 
-  outputs: | # 422
+  outputs: | # 425
     [OUTPUT]
         Name loki
         Match *

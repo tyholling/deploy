@@ -1,5 +1,5 @@
 global: # 5
-  imageRegistry: mirror.gcr.io # 8
+  imageRegistry: ghcr.io
 
 localpv: # 26
   updateStrategy: # 34
@@ -16,4 +16,4 @@ localpv: # 26
 fullnameOverride: localpv-provisioner # 86
 
 hostpathClass: # 97
-  isDefaultClass: true # 105
+  isDefaultClass: true

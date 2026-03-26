@@ -1,3 +1,6 @@
+image: # 5
+  repository: registry.k8s.io/metrics-server/metrics-server
+
 fullnameOverride: metrics-server # 15
 
 updateStrategy: # 82
@@ -5,10 +8,10 @@ updateStrategy: # 82
     maxSurge: 0
     maxUnavailable: 1
 
-args: # 100
+args: # 101
 - --kubelet-insecure-tls
 
-resources: # 172
+resources: # 173
   limits: null
   requests:
     cpu: 10m

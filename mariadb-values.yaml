@@ -1,14 +1,14 @@
-global: # 14
-  imageRegistry: docker.io # 15
+global: # 15
+  imageRegistry: docker.io
 
-primary: # 275
-  resources: # 506
+primary: # 283
+  resources: # 511
     limits: null
     requests:
       cpu: 10m
       memory: 10Mi
-  persistence: # 595
+  persistence: # 604
     size: 10Gi
-  service: # 647
+  service: # 656
     type: LoadBalancer
     loadBalancerIP: 192.168.64.99

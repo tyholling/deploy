@@ -1,16 +1,15 @@
 global: # 7
-  image: # 8
-    registry: mirror.gcr.io # 10
+  imageRegistry: docker.io
 
-deploymentMode: SingleBinary # 55
+deploymentMode: SingleBinary # 59
 
-loki: # 64
-  auth_enabled: false # 335
-  commonConfig: # 359
-    replication_factor: 1 # 361
-  storage: # 365
-    type: filesystem # 372
-  schemaConfig: # 466
+loki: # 134
+  auth_enabled: false # 447
+  commonConfig: # 483
+    replication_factor: 1
+  storage: # 491
+    type: filesystem
+  schemaConfig: # 590
     configs:
     - from: 2025-01-01
       object_store: filesystem
@@ -20,43 +19,43 @@ loki: # 64
         prefix: index_
         period: 24h
 
-test: # 719
-  enabled: false # 720
+test: # 691
+  enabled: false
 
-lokiCanary: # 747
-  enabled: false # 748
+lokiCanary: # 721
+  enabled: false
 
-gateway: # 988
-  enabled: false # 990
+gateway: # 906
+  enabled: false
 
-singleBinary: # 1362
-  replicas: 1 # 1364
-  resources: # 1415
+singleBinary: # 1279
+  replicas: 1 # 1281
+  resources: # 1344
     limits: null
     requests:
       cpu: 10m
       memory: 10Mi
-  persistence: # 1433
-    size: 10Gi # 1439
+  persistence: # 1370
+    size: 10Gi
 
-write: # 1459
-  replicas: 0 # 1461
+write: # 1409
+  replicas: 0
 
-read: # 1580
-  replicas: 0 # 1582
+read: # 1559
+  replicas: 0
 
-backend: # 1692
-  replicas: 0 # 1694
+backend: # 1704
+  replicas: 0
 
-memcached: # 3194
-  enabled: false # 3196
+memcached: # 3703
+  enabled: false
 
-resultsCache: # 3252
-  enabled: false # 3254
+resultsCache: # 3793
+  enabled: false
 
-chunksCache: # 3352
-  enabled: false # 3354
+chunksCache: # 3904
+  enabled: false
 
-sidecar: # 3583
-  rules: # 3616
-    enabled: false # 3618
+sidecar: # 4237
+  rules:
+    enabled: false

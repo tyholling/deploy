@@ -1,31 +1,31 @@
-global: #1
-  imageRegistry: mirror.gcr.io # 3
+global: # 1
+  imageRegistry: docker.io
 
 deploymentStrategy: # 77
   rollingUpdate:
     maxSurge: 0
     maxUnavailable: 1
 
-service: # 231
+service: # 233
   type: LoadBalancer
   loadBalancerIP: 192.168.64.90
 
-ingress: # 280
+ingress: # 285
   enabled: false
 
-resources: # 354
+resources: # 362
   limits: null
   requests:
     cpu: 10m
     memory: 10Mi
 
-envValueFrom: # 548
+envValueFrom: # 556
   MARIADB_PASSWORD:
     secretKeyRef:
       name: mariadb-credentials
       key: mariadb-grafana-password
 
-datasources:
+datasources: # 672
   datasources.yaml:
     apiVersion: 1
     datasources:
@@ -38,7 +38,7 @@ datasources:
       access: proxy
       url: http://loki:3100
 
-grafana.ini: # 876
+grafana.ini: # 887
   database:
     type: mysql
     host: mariadb.mariadb:3306

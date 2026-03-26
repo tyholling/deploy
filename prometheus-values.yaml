@@ -1,30 +1,32 @@
 configmapReload: # 30
-  prometheus: # 47
-    enabled: false # 50
+  prometheus:
+    enabled: false
 
 server: # 126
-  configMapOverrideName: config
-  fullnameOverride: prometheus # 369
-  persistentVolume: # 526
-    size: 10Gi # 563
-  resources: # 694
+  image: # 194
+    repository: quay.io/prometheus/prometheus
+  configMapOverrideName: config # 367
+  fullnameOverride: prometheus # 373
+  persistentVolume: # 530
+    size: 10Gi
+  resources: # 698
     limits: null
     requests:
       cpu: 10m
       memory: 10Mi
-  service: # 749
+  service: # 753
     loadBalancerIP: 192.168.64.91
     type: LoadBalancer
-  retention: 1h
+  retention: 1h # 802
 
-alertmanager: # 1308
-  enabled: false # 1311
+alertmanager: # 1179
+  enabled: false
 
-kube-state-metrics: # 1351
-  enabled: false # 1354
+kube-state-metrics: # 1222
+  enabled: false
 
-prometheus-node-exporter: # 1359
-  enabled: false # 1362
+prometheus-node-exporter: # 1230
+  enabled: false
 
-prometheus-pushgateway: # 1373
-  enabled: false # 1376
+prometheus-pushgateway: # 1244
+  enabled: false

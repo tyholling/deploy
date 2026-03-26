@@ -1,4 +1,12 @@
+image: # 4
+  registry: quay.io
+
 fullnameOverride: node-exporter # 15
+
+updateStrategy: # 327
+  rollingUpdate:
+    maxSurge: 0
+    maxUnavailable: 1
 
 resources: # 332
   limits: null

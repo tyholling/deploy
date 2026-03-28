@@ -1,5 +1,5 @@
-image: # 4
-  registry: quay.io
+global: # 21
+  imageRegistry: quay.io
 
 fullnameOverride: node-exporter # 15
 

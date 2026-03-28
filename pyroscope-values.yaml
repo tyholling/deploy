@@ -1,11 +1,12 @@
-pyroscope: # 6
-  image: # 15
-    repository: mirror.gcr.io/grafana/pyroscope # 16
-  resources: # 105
+global: # 4
+  imageRegistry: docker.io
+
+pyroscope: # 9
+  resources:
     limits: null
     requests:
       cpu: 10m
       memory: 10Mi
 
-alloy: # 449
-  enabled: false # 450
+alloy: # 455
+  enabled: false

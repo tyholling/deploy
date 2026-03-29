@@ -15,7 +15,7 @@ config: # 385
     [INPUT]
         Name tail
         Path /var/log/containers/*.log
-        refresh_interval 1
+        refresh_interval 10
 
   outputs: | # 425
     [OUTPUT]

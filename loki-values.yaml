@@ -31,7 +31,6 @@ gateway: # 906
 singleBinary: # 1279
   replicas: 1 # 1281
   resources: # 1344
-    limits: null
     requests:
       cpu: 10m
       memory: 10Mi

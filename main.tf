@@ -64,6 +64,12 @@ resource "helm_release" "flannel" {
   values     = [file("${path.module}/flannel-values.yaml")]
 }
 
+resource "time_sleep" "flannel" {
+  create_duration = "10s"
+
+  depends_on = [helm_release.flannel]
+}
+
 // localpv /////////////////////////////////////////////////////////////////////////////////////////
 
 resource "kubernetes_namespace_v1" "localpv" {
@@ -79,7 +85,7 @@ resource "helm_release" "localpv-provisioner" {
   namespace  = kubernetes_namespace_v1.localpv.metadata[0].name
   values     = [file("${path.module}/localpv-provisioner-values.yaml")]
 
-  depends_on = [helm_release.flannel]
+  depends_on = [time_sleep.flannel]
 }
 
 // logging /////////////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +103,7 @@ resource "helm_release" "fluent-bit" {
   namespace  = kubernetes_namespace_v1.logging.metadata[0].name
   values     = [file("${path.module}/fluent-bit-values.yaml")]
 
-  depends_on = [helm_release.flannel]
+  depends_on = [time_sleep.flannel]
 }
 
 // metallb /////////////////////////////////////////////////////////////////////////////////////////
@@ -115,7 +121,7 @@ resource "helm_release" "metallb" {
   namespace  = kubernetes_namespace_v1.metallb.metadata[0].name
   values     = [file("${path.module}/metallb-values.yaml")]
 
-  depends_on = [helm_release.flannel]
+  depends_on = [time_sleep.flannel]
 }
 
 resource "time_sleep" "metallb" {
@@ -159,7 +165,7 @@ resource "helm_release" "metrics-server" {
   namespace  = kubernetes_namespace_v1.metrics.metadata[0].name
   values     = [file("${path.module}/metrics-server-values.yaml")]
 
-  depends_on = [helm_release.flannel]
+  depends_on = [time_sleep.flannel]
 }
 
 // mariadb /////////////////////////////////////////////////////////////////////////////////////////
@@ -311,8 +317,8 @@ resource "helm_release" "loki" {
   values     = [file("${path.module}/loki-values.yaml")]
 
   depends_on = [
-    helm_release.flannel,
     helm_release.localpv-provisioner,
+    time_sleep.flannel,
   ]
 }
 
@@ -345,7 +351,7 @@ resource "helm_release" "node-exporter" {
   namespace  = kubernetes_namespace_v1.grafana.metadata[0].name
   values     = [file("${path.module}/node-exporter-values.yaml")]
 
-  depends_on = [helm_release.flannel]
+  depends_on = [time_sleep.flannel]
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

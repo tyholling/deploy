@@ -25,3 +25,6 @@ speaker: # 262
       memory: 10Mi
   frr: # 335
     enabled: false
+
+frrk8s: # 364
+  enabled: false

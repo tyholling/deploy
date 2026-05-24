@@ -118,16 +118,22 @@ resource "helm_release" "metallb" {
   depends_on = [helm_release.flannel]
 }
 
+resource "time_sleep" "metallb" {
+  create_duration = "10s"
+
+  depends_on = [helm_release.metallb]
+}
+
 resource "kubectl_manifest" "metallb-ip-address-pool" {
   yaml_body = file("metallb-ip-address-pool.yaml")
 
-  depends_on = [helm_release.metallb]
+  depends_on = [time_sleep.metallb]
 }
 
 resource "kubectl_manifest" "metallb-l2-advertisement" {
   yaml_body = file("metallb-l2-advertisement.yaml")
 
-  depends_on = [helm_release.metallb]
+  depends_on = [time_sleep.metallb]
 }
 
 resource "terraform_data" "metallb" {

@@ -1,0 +1,95 @@
+esp32:
+  variant: esp32c3
+  flash_size: 4MB
+  cpu_frequency: 160MHz
+  framework:
+    type: esp-idf
+
+esphome:
+  name: airone
+
+api:
+
+i2c:
+  sda: GPIO1
+  scl: GPIO0
+
+logger:
+  level: ERROR
+
+mdns:
+  disabled: True
+
+# network:
+# enable_high_performance: False
+
+ota:
+- platform: esphome
+
+prometheus:
+
+sensor:
+- platform: dps310
+  pressure:
+    name: dps310_pressure
+  temperature:
+    name: dps310_temperature
+  update_interval: 60s
+
+- platform: internal_temperature
+  name: internal_temperature
+  update_interval: 60s
+
+- platform: mics_4514
+  nitrogen_dioxide:
+    name: mics_4514_nitrogen_dioxide
+  carbon_monoxide:
+    name: mics_4514_carbon_monoxide
+  hydrogen:
+    name: mics_4514_hydrogen
+  ethanol:
+    name: mics_4514_ethanol
+  methane:
+    name: mics_4514_methane
+  ammonia:
+    name: mics_4514_ammonia
+  update_interval: 60s
+
+- platform: scd4x
+  co2:
+    name: scd4x_co2
+  temperature:
+    name: scd4x_temperature
+  humidity:
+    name: scd4x_humidity
+  measurement_mode: low_power_periodic
+  update_interval: 60s
+
+- platform: sen5x
+  pm_1_0:
+    name: sen5x_pm_1_0
+  pm_2_5:
+    name: sen5x_pm_2_5
+  pm_4_0:
+    name: sen5x_pm_4_0
+  pm_10_0:
+    name: sen5x_pm_10_0
+  temperature:
+    name: sen5x_temperature
+  humidity:
+    name: sen5x_humidity
+  voc:
+    name: sen5x_voc
+  nox:
+    name: sen5x_nox
+  acceleration_mode: low
+  update_interval: 60s
+
+- platform: uptime
+  name: uptime
+  type: seconds
+  update_interval: 60s
+
+# web_server
+
+wifi: !secret wifi

@@ -15,7 +15,7 @@ server: # 126
       cpu: 10m
       memory: 10Mi
   service: # 753
-    loadBalancerIP: 192.168.64.91
+    loadBalancerIP: 192.168.0.91
     type: LoadBalancer
   retention: 1h # 802
 

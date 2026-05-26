@@ -4,5 +4,7 @@ metadata:
   name: l2-advertisement
   namespace: metallb
 spec:
+  interfaces:
+  - eth1
   ipAddressPools:
   - ip-address-pool

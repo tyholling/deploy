@@ -8,7 +8,7 @@ deploymentStrategy: # 77
 
 service: # 233
   type: LoadBalancer
-  loadBalancerIP: 192.168.0.90
+  loadBalancerIP: 192.168.64.90
 
 ingress: # 285
   enabled: false

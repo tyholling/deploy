@@ -41,7 +41,7 @@ provider "kubernetes" {
 }
 
 provider "mysql" {
-  endpoint = "192.168.0.99:3306"
+  endpoint = "192.168.64.99:3306"
   username = "root"
   password = random_string.mariadb-root-password.result
 }

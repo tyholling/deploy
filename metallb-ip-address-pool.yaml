@@ -5,6 +5,7 @@ metadata:
   namespace: metallb
 spec:
   addresses:
+  - fd64::1-fd64::ffff
   - 192.168.64.90-192.168.64.99
   autoAssign: true
   avoidBuggyIPs: true

@@ -8,7 +8,9 @@ deploymentStrategy: # 77
 
 service: # 233
   type: LoadBalancer
-  loadBalancerIP: 192.168.64.90
+  ipFamilyPolicy: RequireDualStack
+  annotations:
+    metallb.io/loadBalancerIPs: "fd64::90,192.168.64.90"
 
 ingress: # 285
   enabled: false

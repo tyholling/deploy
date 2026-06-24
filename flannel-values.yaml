@@ -1,12 +1,17 @@
-podCidr: 172.20.0.0/16 # 8
+podCidr: "172.20.0.0/16"
+podCidrv6: "fd64:10::/48"
 
 flannel: # 11
   image: # 13
     repository: ghcr.io/flannel-io/flannel
   image_cni: # 16
     repository: ghcr.io/flannel-io/flannel-cni-plugin
-  enableNFTables: true # 27
-  backend: host-gw # 34
+  args:
+  - --ip-masq
+  - --kube-subnet-mgr
+  - --iface=tun0
+  - --iface=eth0
+  backend: vxlan # 34
   resources: # 85
     limits: null
     requests:

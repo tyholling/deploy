@@ -9,6 +9,24 @@ primary: # 283
       memory: 10Mi
   persistence: # 604
     size: 10Gi
-  service: # 656
+
+extraDeploy:
+- |
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: mariadb-lb
+    namespace: mariadb
+    annotations:
+      metallb.io/loadBalancerIPs: "fd64::99,192.168.64.99"
+  spec:
+    ipFamilyPolicy: RequireDualStack
+    ports:
+    - name: mysql
+      port: 3306
+      targetPort: mysql
+    selector:
+      app.kubernetes.io/component: primary
+      app.kubernetes.io/instance: mariadb
+      app.kubernetes.io/name: mariadb
     type: LoadBalancer
-    loadBalancerIP: 192.168.64.99

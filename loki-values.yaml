@@ -3,13 +3,28 @@ global: # 7
 
 deploymentMode: SingleBinary # 59
 
-loki: # 134
-  auth_enabled: false # 447
-  commonConfig: # 483
+loki:
+  auth_enabled: false
+  commonConfig:
     replication_factor: 1
-  storage: # 491
+    ring:
+      instance_enable_ipv6: true
+      kvstore:
+        store: memberlist
+  compactor:
+    compactor_ring:
+      instance_enable_ipv6: true
+  frontend:
+    instance_enable_ipv6: true
+  index_gateway:
+    ring:
+      instance_enable_ipv6: true
+  query_scheduler:
+    scheduler_ring:
+      instance_enable_ipv6: true
+  storage:
     type: filesystem
-  schemaConfig: # 590
+  schemaConfig:
     configs:
     - from: 2025-01-01
       object_store: filesystem
